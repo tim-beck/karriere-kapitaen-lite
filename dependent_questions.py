@@ -58,8 +58,6 @@ openai_zustimmung = st.checkbox(
     help="Ohne Zustimmung kann der Chat nicht starten."
 )
 
-kontakt_erlaubnis = st.checkbox("Ich bin einverstanden, dass ihr mich per E-Mail kontaktiert.")
-
 # Hauptziel-Auswahl
 ziel = st.radio(
     "Wobei brauchst du gerade Unterstützung?",
