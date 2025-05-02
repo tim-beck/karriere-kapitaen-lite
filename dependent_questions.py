@@ -96,7 +96,7 @@ elif ziel == "Etwas anderes":
     zusatz_info = f"Der/die Nutzer:in heißt {vorname}, hat ein spezielles Anliegen: {wunsch}."
 
 # --- Chat-Start bei vollständigen Informationen ---
-if st.button("✅ Chat starten", disabled=not (vorname and email and dsgvo_zustimmung and datenschutz_agb and openai_zustimmung and kontakt_erlaubnis)):
+if st.button("✅ Chat starten", disabled=not (vorname and email and dsgvo_zustimmung and datenschutz_agb and openai_zustimmung)):
     # Erstelle den initialen System-Prompt mit allen gesammelten Informationen
     system_prompt = base_prompt + "\n\n" + zusatz_info
     
