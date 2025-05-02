@@ -29,58 +29,120 @@ Stelle keine Diagnosen und gib keine vorschnellen Ratschläge. Stelle stattdesse
 hilf beim Sortieren von Gedanken und biete bei Bedarf passende Informationen an.
 """
 
-st.title("🎓 Karriere-Coach Chatbot")
+st.title("🎓 Karriere-Kapitän Mini-Coaching")
 
 # Willkommens-Text
 st.markdown("""
-Willkommen beim Karriere-Coach 🤝  
-Hier bekommst du keine "goldene Lösung", sondern Denkanstöße und neue Perspektiven.  
-Der Chat soll dir helfen, deine eigenen Ideen zu sortieren und mutige nächste Schritte zu entdecken.
+Willkommen! 💙 Hier bekommst du neue Perspektiven für deine Karriereplanung. 
+Wichtig: hier gibt's keine "goldene Lösung", sondern nur Denkanstöße - nur du bist der Kapitän deiner Karriere.
 """)
 
-# Benutzerinformationen
-vorname = st.text_input("Vorname")
-email = st.text_input("E-Mail")
+# --- Generelle Fragen ---
+st.subheader("Allgemeine Informationen")
+vorname = st.text_input("Wie heißt du?")
+email = st.text_input("Wie lautet deine E-Mail-Adresse?")
 
 # Datenschutz und Kontakt
-dsgvo_zustimmung = st.checkbox("Ich stimme der [Datenverarbeitung gemäß DSGVO](https://deine-datenschutzseite.de) zu.", help="Ohne Zustimmung kann der Chat nicht starten.")
+dsgvo_zustimmung = st.checkbox(
+    "Ich bin mindestens 16 Jahre alt oder habe die Einverständniserklärung meiner Eltern.",
+    help="Ohne Zustimmung kann der Chat nicht starten."
+)
+
+datenschutz_agb = st.checkbox(
+    "Ich habe die [Datenschutzerklärung](https://karriere-kapitaen.com/datenschutz/) und die [AGB](https://karriere-kapitaen.com/agb/) gelesen und stimme der Verarbeitung meiner Daten ausdrücklich zu.",
+    help="Ohne Zustimmung kann der Chat nicht starten."
+)
+
+openai_zustimmung = st.checkbox(
+    "Ich stimme der Verarbeitung der Antworten, die ich hier gebe, durch OpenAI zu.",
+    help="Ohne Zustimmung kann der Chat nicht starten."
+)
+
 kontakt_erlaubnis = st.checkbox("Ich bin einverstanden, dass ihr mich per E-Mail kontaktiert.")
 
-# --- Hauptziel-Auswahl ---
+# Hauptziel-Auswahl
 ziel = st.radio(
-    "Worum geht es dir gerade?",
-    ["Ich suche meinen Beruf", "Ich überlege Studium oder Ausbildung", "Ich will ein Gap Year planen"],
+    "Wobei brauchst du gerade Unterstützung?",
+    ["Beruf finden", "Studium oder Ausbildung wählen", "Gap Year planen", "Etwas anderes"],
     key="ziel"
 )
 
-# --- Zusatzfragen basierend auf Hauptziel ---
+# Weitere generelle Fragen
+wunsch = st.text_input("Was genau wünschst du dir vom Karriere-Kapitän?")
+freizeit = st.text_input("Was machst du gerne in deiner Freizeit? Warum?")
+staerken = st.text_input("Was kannst du gut – oder wofür wurdest du schonmal gelobt?")
+
+# --- Pfadspezifische Fragen ---
 zusatz_info = ""
-if ziel == "Ich suche meinen Beruf":
-    interesse = st.text_input("Was interessiert dich aktuell besonders?")
-    staerken = st.multiselect("Welche Stärken passen zu dir?", ["analytisch", "kreativ", "kommunikativ", "teamfähig", "organisiert", "hilfsbereit"])
-    zusatz_info = f"Der/die Nutzer:in heißt {vorname}, sucht Orientierung für die Berufswahl, interessiert sich für {interesse}, Stärken: {', '.join(staerken)}."
-elif ziel == "Ich überlege Studium oder Ausbildung":
-    wichtig = st.selectbox("Was ist dir dabei wichtiger?", ["Praxis", "Theorie", "Beides"])
-    fach = st.text_input("In welchem Bereich möchtest du dich evtl. weiterbilden?")
-    zusatz_info = f"Der/die Nutzer:in heißt {vorname}, überlegt zwischen Studium und Ausbildung, bevorzugt {wichtig}, interessiert an {fach}."
-elif ziel == "Ich will ein Gap Year planen":
-    aktivitaeten = st.multiselect("Was möchtest du im Gap Year machen?", ["Reisen", "Arbeiten", "Soziales", "Lernen", "Praktikum"])
-    ort = st.text_input("Gibt es bestimmte Orte oder Länder, die dich reizen?")
-    zusatz_info = f"Der/die Nutzer:in heißt {vorname}, plant ein Gap Year, möchte dabei {', '.join(aktivitaeten)} machen und denkt an {ort}."
+
+if ziel == "Studium oder Ausbildung wählen":
+    schulfaecher = st.text_input("Welche Schulfächer magst oder mochtest du besonders? Wo warst du besonders gut?")
+    ueberlegungen = st.text_input("Was hast du bisher in Richtung Studium oder Ausbildung überlegt? Warum?")
+    zusatz_info = f"Der/die Nutzer:in heißt {vorname}, überlegt zwischen Studium und Ausbildung. Besonders interessiert an {schulfaecher}, bisherige Überlegungen: {ueberlegungen}."
+
+elif ziel == "Beruf finden":
+    berufsfelder = st.text_input("Welche Berufsfelder findest du spannend? Warum?")
+    zusatz_info = f"Der/die Nutzer:in heißt {vorname}, sucht Orientierung für die Berufswahl. Interessante Berufsfelder: {berufsfelder}."
+
+elif ziel == "Gap Year planen":
+    gap_year_optionen = st.multiselect(
+        "Was könntest du dir für dein Gap Year vorstellen?",
+        ["Freiwilliges Soziales/ Ökologisches/ Kulturelles Jahr", "Bundeswehr", "Praktika", "Sprachkurs", 
+         "Online Kurse", "Studium Generale/ Orientierungsstudium", "Au Pair", "Work & Travel",
+         "Etwas anderes", "Direkt beginnen mit Ausbildung/Studium"]
+    )
+    zusatz_info = f"Der/die Nutzer:in heißt {vorname}, plant ein Gap Year. Interessante Optionen: {', '.join(gap_year_optionen)}."
+
+elif ziel == "Etwas anderes":
+    # Hier können später spezifische Fragen für andere Anliegen hinzugefügt werden
+    zusatz_info = f"Der/die Nutzer:in heißt {vorname}, hat ein spezielles Anliegen: {wunsch}."
 
 # --- Chat-Start bei vollständigen Informationen ---
-if st.button("✅ Chat starten", disabled=not (vorname and email and dsgvo_zustimmung and kontakt_erlaubnis)):
+if st.button("✅ Chat starten", disabled=not (vorname and email and dsgvo_zustimmung and datenschutz_agb and openai_zustimmung and kontakt_erlaubnis)):
+    # Erstelle den initialen System-Prompt mit allen gesammelten Informationen
     system_prompt = base_prompt + "\n\n" + zusatz_info
+    
+    # Erstelle den Prompt für die erste Nachricht
+    first_message_prompt = f"""
+    Bedanke dich beim Nutzer freundlich für die Angaben.
+    Fasse kurz zusammen, wobei der oder die Nutzer*in sich Unterstützung wünscht – orientiere dich dazu an den Antworten zu:
+    - Hauptziel: {ziel}
+    - Wunsch: {wunsch}
+    
+    Gib dann ein bis zwei konkrete, neue Ideen oder Denkanstöße, die helfen könnten – passend zur ausgewählten Richtung.
+    
+    Beziehe dabei auch passende Infos aus den anderen Antworten ein:
+    - Freizeitaktivitäten: {freizeit}
+    - Stärken: {staerken}
+    
+    Frag am Ende proaktiv nach:
+    "Was davon findest du interessant?" oder "Worüber möchtest du als Nächstes sprechen?"
+    """
+    
+    # Initialisiere die Chat-Historie mit System-Prompt
     st.session_state.messages = [
-        {"role": "system", "content": system_prompt},
-        {"role": "assistant", "content": "Hi 👋 Schön, dass du da bist. Worüber möchtest du heute sprechen?"}
+        {"role": "system", "content": system_prompt}
     ]
-    st.session_state.chat_started = True
+    
+    # Generiere die erste Nachricht mit dem Sprachmodell
+    with st.spinner("💭 Bereite deine persönliche Beratung vor..."):
+        response = requests.post(api_url, headers=headers, json={
+            "model": "gpt-4",
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": first_message_prompt}
+            ],
+            "temperature": 0.7,
+            "max_tokens": 1000
+        })
+        first_message = response.json()["choices"][0]["message"]["content"]
+        st.session_state.messages.append({"role": "assistant", "content": first_message})
+        st.session_state.chat_started = True
 
 # --- Chat-Interface ---
 if st.session_state.get("chat_started", False):
     st.divider()
-    st.header("🗨️ Dein Coaching-Chat")
+    st.header("💬 Dein Karriere-Kapitän-Chat")
 
     # Maximale Anzahl an Nachrichten: 10 (5 User, 5 Bot)
     max_messages = 10
@@ -132,7 +194,7 @@ if st.session_state.get("chat_started", False):
 
             with st.spinner("💭 Denke nach..."):
                 response = requests.post(api_url, headers=headers, json={
-                    "model": "gpt-4o",
+                    "model": "gpt-4",
                     "messages": st.session_state.messages,
                     "temperature": 0.7,
                     "max_tokens": 1000
