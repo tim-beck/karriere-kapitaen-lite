@@ -1,8 +1,17 @@
 import streamlit as st
 import requests
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # --- OpenAI API Konfiguration ---
-api_key = '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'
+api_key = os.getenv('OPENAI_API_KEY')
+if not api_key:
+    st.error("Please set the OPENAI_API_KEY environment variable in your .env file")
+    st.stop()
+
 api_url = "https://api.openai.com/v1/chat/completions"
 
 headers = {
