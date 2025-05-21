@@ -1,0 +1,167 @@
+[
+  {
+    "titel": "International Management",
+    "abschluss": "B.Sc.",
+    "location": "Dortmund, Frankfurt am Main, München, Hamburg, Köln, Stuttgart, Berlin",
+    "bewerbungsfrist": "15. Juli (Winter) / 15. Dez (Frühjahr)",
+    "dauer": "6 Semester (3 Jahre)",
+    "studiengebühr": "4.380 € pro Semester",
+    "url": "https://en.ism.de/full-degree-students/bachelor-programs/bachelor-international-management/overview",
+    "unterrichtssprache": "Englisch",
+    "ansprechpartner": {
+      "name": "Anna Schuster",
+      "telefon": "+49 231 7777 100",
+      "email": "anna.schuster@ism.de"
+    }
+  },
+  {
+    "titel": "Finance & Management",
+    "abschluss": "B.Sc.",
+    "location": "Dortmund, Frankfurt am Main, München, Hamburg, Köln, Stuttgart, Berlin",
+    "bewerbungsfrist": "15. Juli / 15. Dez",
+    "dauer": "6 Semester (3 Jahre)",
+    "studiengebühr": "4.380 € pro Semester",
+    "url": "https://en.ism.de/full-degree-students/bachelor-programs/bachelor-finance/overview",
+    "unterrichtssprache": "Englisch",
+    "ansprechpartner": {
+      "name": "Fabian Keller",
+      "telefon": "+49 231 7777 101",
+      "email": "fabian.keller@ism.de"
+    }
+  },
+  {
+    "titel": "Applied Data Science & Business Analytics",
+    "abschluss": "B.Sc.",
+    "location": "Dortmund, Frankfurt am Main, München, Hamburg, Köln, Stuttgart, Berlin",
+    "bewerbungsfrist": "15. Juli / 15. Dez",
+    "dauer": "6 Semester (3 Jahre)",
+    "studiengebühr": "4.380 € pro Semester",
+    "url": "https://en.ism.de/full-degree-students/bachelor-programs/bachelor-data-science-and-business-analytics/overview",
+    "unterrichtssprache": "Englisch",
+    "ansprechpartner": {
+      "name": "Lisa Hoffmann",
+      "telefon": "+49 231 7777 102",
+      "email": "lisa.hoffmann@ism.de"
+    }
+  },
+  {
+    "titel": "Information Systems",
+    "abschluss": "B.Sc.",
+    "location": "Dortmund, Frankfurt am Main, München, Hamburg, Köln, Stuttgart, Berlin",
+    "bewerbungsfrist": "15. Juli / 15. Dez",
+    "dauer": "6 Semester (3 Jahre)",
+    "studiengebühr": "4.380 € pro Semester",
+    "url": "https://en.ism.de/full-degree-students/bachelor-programs/bachelor-information-systems/overview",
+    "unterrichtssprache": "Englisch",
+    "ansprechpartner": {
+      "name": "Tim Schröder",
+      "telefon": "+49 231 7777 103",
+      "email": "tim.schroeder@ism.de"
+    }
+  },
+  {
+    "titel": "Real Estate Management",
+    "abschluss": "B.Sc.",
+    "location": "Dortmund, Frankfurt am Main, München, Hamburg, Köln, Stuttgart, Berlin",
+    "bewerbungsfrist": "15. Juli / 15. Dez",
+    "dauer": "6 Semester (3 Jahre)",
+    "studiengebühr": "4.380 € pro Semester",
+    "url": "https://ism.de/bachelor/vollzeit/immobilienwirtschaft-bachelor/ueberblick",
+    "unterrichtssprache": "Deutsch mit englischsprachigen Modulen",
+    "ansprechpartner": {
+      "name": "Julia König",
+      "telefon": "+49 231 7777 104",
+      "email": "julia.koenig@ism.de"
+    }
+  },
+  {
+    "titel": "Marketing & Communications Management",
+    "abschluss": "B.A.",
+    "location": "Dortmund, Frankfurt am Main, München, Hamburg, Köln, Stuttgart, Berlin",
+    "bewerbungsfrist": "15. Juli / 15. Dez",
+    "dauer": "6 Semester (3 Jahre)",
+    "studiengebühr": "4.380 € pro Semester",
+    "url": "https://ism.de/bachelor/vollzeit/bachelor-marketing/ueberblick",
+    "unterrichtssprache": "Deutsch & Englisch (ca. 60/40)",
+    "ansprechpartner": {
+      "name": "Markus Böhm",
+      "telefon": "+49 231 7777 105",
+      "email": "markus.boehm@ism.de"
+    }
+  },
+  {
+    "titel": "Global Brand & Fashion Management",
+    "abschluss": "B.A.",
+    "location": "Dortmund, Frankfurt am Main, München, Hamburg, Köln, Stuttgart, Berlin",
+    "bewerbungsfrist": "15. Juli / 15. Dez",
+    "dauer": "6 Semester (3 Jahre)",
+    "studiengebühr": "4.380 € pro Semester",
+    "url": "https://ism.de/bachelor/vollzeit/fashion-management-studium/ueberblick",
+    "unterrichtssprache": "Deutsch & Englisch (ca. 60/40)",
+    "ansprechpartner": {
+      "name": "Nadine Vogt",
+      "telefon": "+49 231 7777 106",
+      "email": "nadine.vogt@ism.de"
+    }
+  },
+  {
+    "titel": "International Sports Management",
+    "abschluss": "B.A.",
+    "location": "Dortmund, Frankfurt am Main, München, Hamburg, Köln, Stuttgart, Berlin",
+    "bewerbungsfrist": "15. Juli / 15. Dez",
+    "dauer": "6 Semester (3 Jahre)",
+    "studiengebühr": "4.380 € pro Semester",
+    "url": "https://ism.de/bachelor/vollzeit/bachelor-sportmanagement/ueberblick",
+    "unterrichtssprache": "Deutsch & Englisch (ca. 60/40)",
+    "ansprechpartner": {
+      "name": "Sebastian Lenz",
+      "telefon": "+49 231 7777 107",
+      "email": "sebastian.lenz@ism.de"
+    }
+  },
+  {
+    "titel": "Tourism & Event Management",
+    "abschluss": "B.A.",
+    "location": "Dortmund, Frankfurt am Main, München, Hamburg, Köln, Stuttgart, Berlin",
+    "bewerbungsfrist": "15. Juli / 15. Dez",
+    "dauer": "6 Semester (3 Jahre)",
+    "studiengebühr": "4.380 € pro Semester",
+    "url": "https://ism.de/bachelor/vollzeit/tourismus-eventmanagement-studieren/ueberblick",
+    "unterrichtssprache": "Deutsch & Englisch (ca. 60/40)",
+    "ansprechpartner": {
+      "name": "Laura Becker",
+      "telefon": "+49 231 7777 108",
+      "email": "laura.becker@ism.de"
+    }
+  },
+  {
+    "titel": "Wirtschaftspsychologie",
+    "abschluss": "B.Sc.",
+    "location": "Dortmund, Frankfurt am Main, München, Hamburg, Köln, Stuttgart, Berlin",
+    "bewerbungsfrist": "15. Juli / 15. Dez",
+    "dauer": "6 Semester (3 Jahre)",
+    "studiengebühr": "4.380 € pro Semester",
+    "url": "https://ism.de/bachelor/vollzeit/wirtschaftspsychologie-bachelor/ueberblick",
+    "unterrichtssprache": "Deutsch & Englisch (ca. 60/40)",
+    "ansprechpartner": {
+      "name": "Daniel Schulz",
+      "telefon": "+49 231 7777 109",
+      "email": "daniel.schulz@ism.de"
+    }
+  },
+  {
+    "titel": "Business Law",
+    "abschluss": "LL.B.",
+    "location": "Dortmund, Hamburg",
+    "bewerbungsfrist": "15. Juli / 15. Dez",
+    "dauer": "6 Semester (3 Jahre)",
+    "studiengebühr": "4.380 € pro Semester",
+    "url": "https://ism.de/bachelor/vollzeit/wirtschaftsrecht-bachelor/ueberblick",
+    "unterrichtssprache": "Deutsch & Englisch (ca. 60/40)",
+    "ansprechpartner": {
+      "name": "Katharina Weiß",
+      "telefon": "+49 231 7777 110",
+      "email": "katharina.weiss@ism.de"
+    }
+  }
+]
