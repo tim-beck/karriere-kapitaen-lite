@@ -67,7 +67,7 @@ headers = {
 # --- Lade ISM Studiengänge ---
 def load_study_programs():
     try:
-        with open('ism_studiengaenge.json', 'r', encoding='utf-8') as file:
+        with open('ism/ism_studiengaenge.json', 'r', encoding='utf-8') as file:
             return json.load(file)
     except Exception as e:
         st.error(f"Fehler beim Laden der Studiengänge: {str(e)}")
