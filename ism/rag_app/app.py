@@ -161,17 +161,44 @@ if 'initial_suggestions' not in st.session_state:
 # --- RAG Setup ---
 @st.cache_resource
 def setup_vectorstore():
-    # Use an absolute path for the vectorstore directory
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    vectorstore_dir = os.path.join(script_dir, "vectorstore")
-    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    vectorstore = Chroma(
-        persist_directory=vectorstore_dir,
-        embedding_function=embeddings
-    )
-    return vectorstore
+    try:
+        # Use an absolute path for the vectorstore directory
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        vectorstore_dir = os.path.join(script_dir, "vectorstore")
+        
+        # Initialize embeddings with error handling
+        try:
+            embeddings = HuggingFaceEmbeddings(
+                model_name="sentence-transformers/all-MiniLM-L6-v2",
+                model_kwargs={'device': 'cpu'},
+                cache_folder=os.path.join(script_dir, "model_cache")
+            )
+        except Exception as e:
+            st.error(f"Error loading embeddings model: {str(e)}")
+            st.info("Please try refreshing the page. If the error persists, contact support.")
+            return None
 
+        # Initialize vectorstore with error handling
+        try:
+            vectorstore = Chroma(
+                persist_directory=vectorstore_dir,
+                embedding_function=embeddings
+            )
+            return vectorstore
+        except Exception as e:
+            st.error(f"Error initializing vectorstore: {str(e)}")
+            st.info("Please try refreshing the page. If the error persists, contact support.")
+            return None
+    except Exception as e:
+        st.error(f"Unexpected error in setup_vectorstore: {str(e)}")
+        st.info("Please try refreshing the page. If the error persists, contact support.")
+        return None
+
+# Initialize vectorstore with error handling
 vectorstore = setup_vectorstore()
+if vectorstore is None:
+    st.error("Failed to initialize the application. Please try refreshing the page.")
+    st.stop()
 
 # Initialize LLM for explanations
 llm = ChatOpenAI(
