@@ -1,50 +1,61 @@
+"""
+Dieses Skript bereitet die Daten für den ISM-Studienfinder vor.
+Es lädt die Studiengangsdaten aus einer CSV-Datei, erstellt Embeddings und speichert sie in einer Chroma-Vektordatenbank.
+"""
+
 import pandas as pd
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
 import os
 import torch
 
-# This function prepares a vector store from the study programs CSV file
-# It loads the data, creates text and metadata for each entry, generates embeddings, and saves everything in a persistent vector store
-
 def prepare_vectorstore():
-    # Get the directory where this script is located
+    """
+    Hauptfunktion zum Erstellen der Vektordatenbank.
+    
+    Ablauf:
+    1. Lädt Studiengangsdaten aus CSV
+    2. Erstellt Text-Repräsentationen und Metadaten
+    3. Generiert Embeddings mit einem HuggingFace-Modell
+    4. Speichert alles in einer persistenten Chroma-Datenbank
+    """
+    # Bestimme das Verzeichnis des Skripts für relative Pfade
     script_dir = os.path.dirname(os.path.abspath(__file__))
     print(f"Script directory: {script_dir}")
     
-    # Build the absolute path to the CSV file containing the study programs
+    # Pfad zur CSV-Datei mit den Studiengängen
     csv_path = os.path.join(script_dir, 'data', 'studiengaenge.csv')
     print(f"Looking for CSV file at: {csv_path}")
     
-    # Check if the CSV file exists, otherwise raise an error
+    # Überprüfe, ob die CSV-Datei existiert
     if not os.path.exists(csv_path):
         raise FileNotFoundError(f"CSV file not found at: {csv_path}")
     
-    # Load the CSV file into a pandas DataFrame
+    # Lade die CSV-Datei in ein pandas DataFrame
     df = pd.read_csv(csv_path)
     print(f"Successfully loaded CSV file with {len(df)} rows")
     
-    # Prepare lists to hold the text chunks and their associated metadata
-    texts = []
-    metadatas = []
+    # Listen für Text und Metadaten vorbereiten
+    texts = []  # Enthält die Text-Repräsentationen für die Embeddings
+    metadatas = []  # Enthält die Metadaten für jeden Studiengang
     
-    # Get all location columns
+    # Finde alle Standort-Spalten (beginnen mit 'loc_')
     location_columns = [col for col in df.columns if col.startswith('loc_')]
     
-    # Iterate over each row (study program) in the DataFrame
+    # Verarbeite jeden Studiengang
     for _, row in df.iterrows():
-        # Create a text chunk for the study program (used for embedding)
+        # Erstelle Text-Repräsentation für Embeddings
         text = f"""
         Studiengang: {row['Titel des Studiengangs']}
         Kurzbeschreibung: {row['Kurzbeschreibung']}
         """
         texts.append(text)
         
-        # Get active locations from binary columns
+        # Extrahiere aktive Standorte aus den binären Spalten
         active_locations = []
         for loc_col in location_columns:
             if row[loc_col]:
-                # Convert column name to city name (e.g., loc_dor -> Dortmund)
+                # Mappe Spaltennamen auf Städtenamen
                 city_map = {
                     'loc_dor': 'Dortmund',
                     'loc_ffm': 'Frankfurt/Main',
@@ -56,15 +67,15 @@ def prepare_vectorstore():
                 }
                 active_locations.append(city_map[loc_col])
         
-        # Join locations into a comma-separated string
+        # Füge Standorte als kommagetrennte Liste hinzu
         locations_str = ", ".join(active_locations)
         
-        # Collect relevant metadata for each study program
+        # Sammle alle relevanten Metadaten für den Studiengang
         metadata = {
             'titel': row['Titel des Studiengangs'],
             'abschluss': row['Abschluss'],
             'studienform': row['Studienform'],
-            'standorte': locations_str,  # Keep the string for display
+            'standorte': locations_str,  # String für die Anzeige
             'unterrichtssprache': row['Unterrichtssprache (kurz)'],
             'url': row['URL'],
             'studiengebuehren': row['Studiengebühren'],
@@ -72,7 +83,7 @@ def prepare_vectorstore():
             'bewerbungsfrist': row['Bewerbungsfrist'],
             'auslandssemester': row['Auslandssemester'],
             'akkreditierung': row['Akkreditierung'],
-            # Add location boolean columns
+            # Füge Standort-Boolean-Spalten hinzu
             'loc_dor': row['loc_dor'],
             'loc_ffm': row['loc_ffm'],
             'loc_muc': row['loc_muc'],
@@ -83,19 +94,20 @@ def prepare_vectorstore():
         }
         metadatas.append(metadata)
     
-    # Choose the device for embedding model: GPU (cuda) if available, otherwise CPU
+    # Wähle das Gerät für das Embedding-Modell: GPU wenn verfügbar, sonst CPU
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    # Initialize the HuggingFace sentence transformer embeddings
+    
+    # Initialisiere das HuggingFace Embedding-Modell
     embeddings = HuggingFaceEmbeddings(
         model_name="sentence-transformers/all-MiniLM-L6-v2",
         model_kwargs={'device': device}
     )
     
-    # Set up the directory where the vector store will be saved
+    # Erstelle das Verzeichnis für die Vektordatenbank
     vectorstore_dir = os.path.join(script_dir, "vectorstore")
     os.makedirs(vectorstore_dir, exist_ok=True)
     
-    # Create the Chroma vector store from the texts and metadata, and persist it to disk
+    # Erstelle die Chroma-Vektordatenbank und speichere sie
     vectorstore = Chroma.from_texts(
         texts=texts,
         embedding=embeddings,
@@ -103,10 +115,10 @@ def prepare_vectorstore():
         persist_directory=vectorstore_dir
     )
     
-    # Persist the vectorstore to disk
+    # Speichere die Vektordatenbank dauerhaft
     vectorstore.persist()
     print("Vectorstore prepared and persisted successfully!")
 
-# Run the function if this script is executed directly
+# Führe die Funktion aus, wenn das Skript direkt ausgeführt wird
 if __name__ == "__main__":
     prepare_vectorstore() 

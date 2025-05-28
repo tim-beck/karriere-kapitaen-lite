@@ -1,3 +1,9 @@
+"""
+ISM-Studienfinder: Eine KI-gestützte Anwendung zur Studiengangsuche.
+Diese App verwendet RAG (Retrieval-Augmented Generation) um passende Studiengänge basierend auf
+Interessen, Stärken und Zielen der Nutzer zu finden.
+"""
+
 import streamlit as st
 import os
 from dotenv import load_dotenv
@@ -6,14 +12,17 @@ from langchain_community.vectorstores import Chroma
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
+import base64
 
-# Load environment variables
-load_dotenv()
+# Lade Umgebungsvariablen (z.B. API-Keys)
+script_dir = os.path.dirname(os.path.abspath(__file__))
+load_dotenv(os.path.join(script_dir, ".env"))
 
-# --- Language Settings ---
+# --- Sprach-Einstellungen ---
+# Definiere alle Texte in Deutsch und Englisch
 LANGUAGES = {
     "DE": {
-        "title": "🎓 ISM Studiengang-Matching",
+        "title": "🎓 ISM-Studienfinder",
         "welcome": "Willkommen bei der ISM International School of Management! 💙\nHier findest du deine passenden Studiengänge basierend auf deinen Interessen und Stärken - für dich kuratiert von unserer ISM-KI, ermöglicht durch [Karriere-Kapitän](https://karriere-kapitaen.com).",
         "interests_goals": "Deine Interessen und Ziele",
         "privacy_notice": "ℹ️ **Wichtig:** Bitte keine personenbezogenen Daten eingeben (z.B. Name oder Kontaktdaten).",
@@ -59,7 +68,7 @@ LANGUAGES = {
         "of": "von"
     },
     "EN": {
-        "title": "🎓 ISM Study Program Matching",
+        "title": "🎓 ISM Study Finder",
         "welcome": "Welcome to ISM International School of Management! 💙\nHere you'll find suitable study programs based on your interests and strengths - curated for you by our ISM AI, powered by [Karriere-Kapitän](https://karriere-kapitaen.com).",
         "interests_goals": "Your Interests and Goals",
         "privacy_notice": "ℹ️ **Important:** Please do not enter any personal data (e.g., name or contact details).",
@@ -106,7 +115,8 @@ LANGUAGES = {
     }
 }
 
-# Add mapping dictionaries for filter options
+# --- Filter-Mappings ---
+# Übersetze englische Filter-Optionen zurück ins Deutsche für die Datenbankabfrage
 FILTER_MAPPINGS = {
     "EN": {
         "language": {
@@ -130,11 +140,12 @@ FILTER_MAPPINGS = {
     }
 }
 
-# Initialize language in session state
+# --- Session State Initialisierung ---
+# Speichere den Sprachzustand
 if 'language' not in st.session_state:
     st.session_state.language = "DE"
 
-# Initialize session state for results
+# Initialisiere Session State für Ergebnisse und Feedback
 if 'initial_results' not in st.session_state:
     st.session_state.initial_results = None
 if 'feedback_results' not in st.session_state:
@@ -148,7 +159,7 @@ if 'show_feedback_results' not in st.session_state:
 if 'request_count' not in st.session_state:
     st.session_state.request_count = 0
 
-# Initialize session state for initial inputs and results
+# Initialisiere Session State für Eingaben
 if 'initial_studienziele' not in st.session_state:
     st.session_state.initial_studienziele = None
 if 'initial_interessen' not in st.session_state:
@@ -161,12 +172,16 @@ if 'initial_suggestions' not in st.session_state:
 # --- RAG Setup ---
 @st.cache_resource
 def setup_vectorstore():
+    """
+    Initialisiert die Vektordatenbank für die semantische Suche.
+    Verwendet das HuggingFace Embedding-Modell und Chroma als Vektordatenbank.
+    """
     try:
-        # Use an absolute path for the vectorstore directory
+        # Bestimme das Verzeichnis für die Vektordatenbank
         script_dir = os.path.dirname(os.path.abspath(__file__))
         vectorstore_dir = os.path.join(script_dir, "vectorstore")
         
-        # Initialize embeddings with error handling
+        # Initialisiere Embeddings mit Fehlerbehandlung
         try:
             embeddings = HuggingFaceEmbeddings(
                 model_name="sentence-transformers/all-MiniLM-L6-v2",
@@ -178,7 +193,7 @@ def setup_vectorstore():
             st.info("Please try refreshing the page. If the error persists, contact support.")
             return None
 
-        # Initialize vectorstore with error handling
+        # Initialisiere Vektordatenbank mit Fehlerbehandlung
         try:
             vectorstore = Chroma(
                 persist_directory=vectorstore_dir,
@@ -194,36 +209,67 @@ def setup_vectorstore():
         st.info("Please try refreshing the page. If the error persists, contact support.")
         return None
 
-# Initialize vectorstore with error handling
+# Initialisiere Vektordatenbank
 vectorstore = setup_vectorstore()
 if vectorstore is None:
     st.error("Failed to initialize the application. Please try refreshing the page.")
     st.stop()
 
-# Initialize LLM for explanations
+# Initialisiere LLM für Erklärungen
 llm = ChatOpenAI(
-    model_name="gpt-4.1-mini",
-    temperature=0.7
+    api_key=os.getenv("OPENAI_API_KEY"),
+    model="gpt-4",
+    temperature=0.7,
+    streaming=False
 )
 
 # --- Custom CSS ---
+# Definiere das Styling für die Benutzeroberfläche
 st.markdown("""
     <style>
+    /* Header Styling */
     .stApp header {
         background-color: #003366;
     }
+    
+    /* Multiple Choice Styling */
     .stMultiSelect [data-baseweb=select] span {
         background-color: #FFA500 !important;
         color: white !important;
     }
-    .powered-by {
-        text-align: center;
+    
+    /* Input Field Focus Styling */
+    .stTextArea textarea:focus,
+    .stTextInput input:focus,
+    .stMultiSelect [data-baseweb=select] div:focus {
+        border-color: #FFA500 !important;
+        box-shadow: 0 0 0 1px #FFA500 !important;
+    }
+    
+    /* Footer Styling */
+    .footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: white;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid #eee;
         font-size: 0.8em;
         color: #666;
-        margin-top: 2rem;
-        padding: 1rem 0;
-        border-top: 1px solid #eee;
     }
+    .footer a {
+        color: #666;
+        text-decoration: none;
+    }
+    .footer a:hover {
+        color: #FFA500;
+    }
+    
+    /* Program Card Styling */
     .program-card {
         background-color: #f8f9fa;
         border-radius: 10px;
@@ -242,6 +288,7 @@ st.markdown("""
     .program-details p {
         margin: 5px 0;
     }
+    
     /* Button Styling */
     .stButton > button {
         background-color: transparent !important;
@@ -253,26 +300,34 @@ st.markdown("""
         border-color: #FFA500 !important;
         color: #FFA500 !important;
     }
+    
+    /* Content Spacing */
+    .main .block-container {
+        padding-bottom: 5rem;
+    }
     </style>
     """, unsafe_allow_html=True)
 
 # --- UI Components ---
+# Erstelle Header mit Sprachauswahl und Logo
 col1, col2 = st.columns([0.8, 0.2])
 with col1:
     if st.button("🇩🇪 DE" if st.session_state.language == "EN" else "🇬🇧 ENG"):
         st.session_state.language = "EN" if st.session_state.language == "DE" else "DE"
         st.rerun()
 with col2:
-    # Get the absolute path to the logo
+    # Lade das ISM-Logo
     script_dir = os.path.dirname(os.path.abspath(__file__))
     logo_path = os.path.join(script_dir, "logos", "ism.png")
-    st.image(logo_path, use_container_width=True)
+    st.image(logo_path, width=200)
 
+# Zeige Titel und Willkommensnachricht
 current_lang = LANGUAGES[st.session_state.language]
 st.title(current_lang["title"])
 st.markdown(current_lang["welcome"])
 
-# --- Main Questions ---
+# --- Hauptfragen ---
+# Eingabefelder für Interessen, Stärken und Ziele
 st.subheader(current_lang["interests_goals"])
 st.markdown(current_lang["privacy_notice"])
 
@@ -291,7 +346,8 @@ studienziele = st.text_area(
     help="⚠️ Bitte gib hier keine personenbezogenen Daten ein"
 )
 
-# --- Filter Options ---
+# --- Filter-Optionen ---
+# Filter für Sprache, Studienform und Standorte
 st.subheader(current_lang["preferences"])
 st.markdown(current_lang["filter_tip"])
 
@@ -310,23 +366,23 @@ standorte = st.multiselect(
     options=current_lang["filter_options"]["locations"]
 )
 
-# Convert selected options back to German for metadata filtering
+# Konvertiere englische Filter-Optionen zurück ins Deutsche
 if st.session_state.language == "EN":
     unterrichtssprache = [FILTER_MAPPINGS["EN"]["language"][lang] for lang in unterrichtssprache]
     studienform = [FILTER_MAPPINGS["EN"]["study_form"][form] for form in studienform]
     standorte = [FILTER_MAPPINGS["EN"]["locations"][loc] for loc in standorte]
 
-# --- Study Program Matching ---
+# --- Studiengang-Matching ---
 if st.button(current_lang["find_programs"]):
     if st.session_state.request_count >= 5:
         st.warning(current_lang["max_requests"])
     else:
         with st.spinner(current_lang["finding_programs"]):
             try:
-                # Increment request counter
+                # Erhöhe den Anfragezähler
                 st.session_state.request_count += 1
                 
-                # Build the query from user input, using empty strings if fields are blank
+                # Erstelle die Suchanfrage aus den Nutzereingaben
                 filled_fields = []
                 if studienziele:
                     filled_fields.append(f"Studienziele: {studienziele}")
@@ -335,32 +391,31 @@ if st.button(current_lang["find_programs"]):
                 if staerken:
                     filled_fields.append(f"Stärken: {staerken}")
 
-                # If no fields are filled, use a more general query
+                # Erstelle die Suchanfrage
                 if not filled_fields:
                     query = "Finde drei verschiedene, interessante Studiengänge. Berücksichtige dabei verschiedene Fachrichtungen und Abschlüsse."
                 else:
-                    # Join fields with newlines without using f-string
                     fields_text = "\n".join(filled_fields)
                     query = f"Basierend auf folgenden Informationen:\n{fields_text}\n\nFinde drei verschiedene, passende Studiengänge. Achte darauf, dass die Studiengänge unterschiedliche Schwerpunkte und Abschlüsse haben."
 
-                # Create filter conditions for metadata
+                # Erstelle Filter-Bedingungen für die Metadaten
                 filter_conditions = []
                 
-                # Handle language filtering - if none selected, don't filter
+                # Filter für Unterrichtssprache
                 if unterrichtssprache:
                     if len(unterrichtssprache) == 1:
                         filter_conditions.append({"unterrichtssprache": {"$eq": unterrichtssprache[0]}})
                     else:
                         filter_conditions.append({"unterrichtssprache": {"$in": unterrichtssprache}})
                 
-                # Handle study form filtering - if none selected, don't filter
+                # Filter für Studienform
                 if studienform:
                     if len(studienform) == 1:
                         filter_conditions.append({"studienform": {"$eq": studienform[0]}})
                     else:
                         filter_conditions.append({"studienform": {"$in": studienform}})
                 
-                # Handle location filtering using boolean columns - if none selected, don't filter
+                # Filter für Standorte
                 if standorte:
                     location_conditions = []
                     location_map = {
@@ -381,7 +436,7 @@ if st.button(current_lang["find_programs"]):
                         else:
                             filter_conditions.append({"$or": location_conditions})
 
-                # Create the final where clause based on number of conditions
+                # Erstelle die finale WHERE-Klausel
                 if len(filter_conditions) == 0:
                     where = None
                 elif len(filter_conditions) == 1:
@@ -389,14 +444,14 @@ if st.button(current_lang["find_programs"]):
                 else:
                     where = {"$and": filter_conditions}
 
-                # Retrieve more results than needed to ensure diversity
+                # Suche nach passenden Studiengängen
                 all_results = vectorstore.similarity_search(
                     query=query,
-                    k=10,  # Get more results than needed
+                    k=10,  # Hole mehr Ergebnisse als benötigt
                     filter=where
                 )
 
-                # Ensure diverse results by selecting programs with different degrees and titles
+                # Stelle sicher, dass die Ergebnisse vielfältig sind
                 selected_results = []
                 seen_degrees = set()
                 seen_titles = set()
@@ -411,38 +466,36 @@ if st.button(current_lang["find_programs"]):
                         if len(selected_results) == 3:
                             break
 
-                # If we don't have enough diverse results, add remaining ones that are different
+                # Füge weitere Ergebnisse hinzu, wenn nötig
                 while len(selected_results) < 3 and all_results:
                     result = all_results.pop(0)
                     if result.metadata['titel'] not in seen_titles:
                         selected_results.append(result)
                         seen_titles.add(result.metadata['titel'])
 
-                results = selected_results[:3]  # Ensure we only return 3 results
+                results = selected_results[:3]  # Begrenze auf 3 Ergebnisse
 
-                # Store initial inputs and results in session state
+                # Speichere Eingaben und Ergebnisse im Session State
                 st.session_state.initial_studienziele = studienziele
                 st.session_state.initial_interessen = interessen
                 st.session_state.initial_staerken = staerken
                 st.session_state.initial_suggestions = []
-
-                # Store initial results in session state
                 st.session_state.initial_results = results
                 st.session_state.show_initial_results = True
                 st.session_state.show_feedback_results = False
 
-                # Display initial results
+                # Zeige die Ergebnisse an
                 if st.session_state.show_initial_results:
                     for i, doc in enumerate(results, 1):
                         meta = doc.metadata
                         
-                        # Generate explanation using LLM
+                        # Generiere Erklärung mit LLM
                         explanation_prompt = f"""
                         Basierend auf den folgenden Informationen des Nutzers:
-                        Studienziele: {studienziele}
-                        Interessen: {interessen}
-                        Stärken: {staerken}
-                        
+                Studienziele: {studienziele}
+                Interessen: {interessen}
+                Stärken: {staerken}
+                
                         Und diesem Studiengang:
                         Beschreibung: {doc.page_content}
                         
@@ -453,7 +506,7 @@ if st.button(current_lang["find_programs"]):
                         
                         explanation = llm.invoke(explanation_prompt).content
                         
-                        # Display the program card
+                        # Zeige die Studiengangskarte an
                         st.markdown(f"""
                         <div class="program-card">
                             <div class="program-title">🎓 {meta['titel']}</div>
@@ -476,22 +529,35 @@ if st.button(current_lang["find_programs"]):
                         </div>
                         """, unsafe_allow_html=True)
 
-                # Add instructions for adjusting inputs
+                # Füge Anweisungen für Anpassungen hinzu
                 st.markdown(f"""
                 <div style="margin-top: 20px;">
                     {current_lang['adjust_inputs']}
                 </div>
                 """, unsafe_allow_html=True)
 
-                # Add request counter display
+                # Zeige den Anfragezähler an
                 st.markdown(f"""
                 <div style="text-align: right; color: #666; font-size: 0.8em; margin-top: 10px;">
                     {current_lang['recommendation']} {st.session_state.request_count} {current_lang['of']} 5
                 </div>
                 """, unsafe_allow_html=True)
-
+                
             except Exception as e:
                 st.error(f"{current_lang['search_error']}: {str(e)}")
 
-# --- Powered by text ---
-st.markdown('<div class="powered-by">Powered by <a href="https://karriere-kapitaen.com" target="_blank">Karriere-Kapitän</a></div>', unsafe_allow_html=True) 
+# --- Footer ---
+# Zeige Footer mit Powered-by und Datenschutzhinweisen
+script_dir = os.path.dirname(os.path.abspath(__file__))
+logo_path = os.path.join(script_dir, "..", "logos", "kk.png")
+st.markdown(f"""
+    <div class="footer">
+        <div class="powered-by">Powered by <a href="https://karriere-kapitaen.com" target="_blank">Karriere-Kapitän</a></div>
+        <div style="text-align: center;">
+            <a href="https://karriere-kapitaen.com" target="_blank">
+                <img src="data:image/png;base64,{base64.b64encode(open(logo_path, 'rb').read()).decode()}" alt="Karriere-Kapitän Logo" style="width: 100px;">
+            </a>
+        </div>
+        <div class="privacy"><a href="https://karriere-kapitaen.com/datenschutzhinweise-ism-studienfinder/" target="_blank">Datenschutzhinweise</a></div>
+    </div>
+""", unsafe_allow_html=True)
