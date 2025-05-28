@@ -1,4 +1,4 @@
-#!/Users/timbeckerhomefolder/Documents/GitHub/karriere-kapitaen-lite/.venv/bin/python
+#!/Users/timbeckerhomefolder/Documents/GitHub/karriere-kapitaen-lite/.venv/bin/python3.12
 # -*- coding: utf-8 -*-
 import re
 import sys
