@@ -253,13 +253,27 @@ st.markdown("""
         left: 0;
         right: 0;
         background-color: white;
-        padding: 1rem 2rem;
+        padding: 1rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
         border-top: 1px solid #eee;
         font-size: 0.8em;
         color: #666;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    .footer-left {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex: 1;
+        min-width: 200px;
+    }
+    .footer-right {
+        text-align: right;
+        flex: 1;
+        min-width: 200px;
     }
     .footer a {
         color: #666;
@@ -267,6 +281,27 @@ st.markdown("""
     }
     .footer a:hover {
         color: #FFA500;
+    }
+    .footer img {
+        height: 30px;
+        width: auto;
+    }
+    @media (min-width: 769px) {
+        .footer {
+            padding: 1rem 5%;
+        }
+    }
+    @media (max-width: 768px) {
+        .footer {
+            flex-direction: column;
+            text-align: center;
+            padding: 0.5rem;
+        }
+        .footer-left, .footer-right {
+            width: 100%;
+            justify-content: center;
+            text-align: center;
+        }
     }
     
     /* Program Card Styling */
@@ -309,17 +344,12 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # --- UI Components ---
-# Erstelle Header mit Sprachauswahl und Logo
+# Erstelle Header mit Sprachauswahl
 col1, col2 = st.columns([0.8, 0.2])
 with col1:
     if st.button("🇩🇪 DE" if st.session_state.language == "EN" else "🇬🇧 ENG"):
         st.session_state.language = "EN" if st.session_state.language == "DE" else "DE"
         st.rerun()
-with col2:
-    # Lade das ISM-Logo
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    logo_path = os.path.join(script_dir, "logos", "ism.png")
-    st.image(logo_path, width=200)
 
 # Zeige Titel und Willkommensnachricht
 current_lang = LANGUAGES[st.session_state.language]
@@ -550,14 +580,20 @@ if st.button(current_lang["find_programs"]):
 # Zeige Footer mit Powered-by und Datenschutzhinweisen
 script_dir = os.path.dirname(os.path.abspath(__file__))
 logo_path = os.path.join(script_dir, "..", "logos", "kk.png")
+
+# Create the footer content
+footer_text = "Studien- und Berufsberatung mit KI, jetzt Vollversion testen bei" if st.session_state.language == "DE" else "Study and Career Counseling with AI, try the full version at"
+privacy_text = "Datenschutzhinweise" if st.session_state.language == "DE" else "Privacy Policy"
 st.markdown(f"""
     <div class="footer">
-        <div class="powered-by">Powered by <a href="https://karriere-kapitaen.com" target="_blank">Karriere-Kapitän</a></div>
-        <div style="text-align: center;">
+        <div class="footer-left">
+            {footer_text}
             <a href="https://karriere-kapitaen.com" target="_blank">
-                <img src="data:image/png;base64,{base64.b64encode(open(logo_path, 'rb').read()).decode()}" alt="Karriere-Kapitän Logo" style="width: 100px;">
+                <img src="data:image/png;base64,{base64.b64encode(open(logo_path, 'rb').read()).decode()}" alt="Karriere-Kapitän Logo">
             </a>
         </div>
-        <div class="privacy"><a href="https://karriere-kapitaen.com/datenschutzhinweise-ism-studienfinder/" target="_blank">Datenschutzhinweise</a></div>
+        <div class="footer-right">
+            <a href="https://karriere-kapitaen.com/datenschutzhinweise-ism-studienfinder/" target="_blank">{privacy_text}</a>
+        </div>
     </div>
 """, unsafe_allow_html=True)
