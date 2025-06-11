@@ -274,7 +274,7 @@ if st.button(current_lang["find_programs"]):
                     ]
                     st.session_state.chat_started = True
                     st.session_state.first_round = True
-                
+                    
             except Exception as e:
                 st.error(f"Fehler bei der Suche: {str(e)}")
 
