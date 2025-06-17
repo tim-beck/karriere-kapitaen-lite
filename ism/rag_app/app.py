@@ -335,6 +335,18 @@ st.markdown("""
         border-color: #FFA500 !important;
         color: #FFA500 !important;
     }
+
+    /* Dark Mode Button Styling */
+    @media (prefers-color-scheme: dark) {
+        .stButton > button {
+            border-color: white !important;
+            color: white !important;
+        }
+        .stButton > button:hover {
+            border-color: #FFA500 !important;
+            color: #FFA500 !important;
+        }
+    }
     
     /* Content Spacing */
     .main .block-container {

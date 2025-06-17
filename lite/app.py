@@ -143,7 +143,7 @@ LANGUAGES = {
             "Dual / Ausbildungsintegriert - Sehr viele Lehrkräfte pro Lernende, verschult, kaum Campusleben",
             "Ich weiß noch nicht"
         ],
-        "version_comparison_title": "Die Vollversion unterscheidet sich in 3 Merkmalen:",
+        "version_comparison_title": "<a href='https://app.karriere-kapitaen.com' target='_blank'>Die Vollversion</a> unterscheidet sich in 3 Merkmalen:",
         "version_comparison_features": [
             "Unlimitierte Anfragen - So viele Fragen wie du möchtest",
             "Noch mehr Fragen an dich - Für noch personalisiertere Inspirationen",
@@ -264,7 +264,7 @@ LANGUAGES = {
         "open_questions": "Open Questions",
         "yes": "Yes",
         "no": "No",
-        "version_comparison_title": "The full version differs in 3 features:",
+        "version_comparison_title": "<a href='https://app.karriere-kapitaen.com' target='_blank'>The full version</a> differs in 3 features:",
         "version_comparison_features": [
             "Unlimited requests - Ask as many questions as you want",
             "More questions for you - For even more personalized inspirations",
